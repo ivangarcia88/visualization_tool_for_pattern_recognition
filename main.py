@@ -19,14 +19,14 @@ while True:
             sg.Popup('Selecciona un dataset', 'Selecciona un dataset valido')
         else:
             speed = values["sp1"]*0 + values["sp2"]*1 + values["sp3"]*2  #0 fast, 1 slow
-            dim = 2 + values["p3d"]*1 
-            fig, neigh, classes, limg = vp.plotfunc(window,dataset,speed,dim)
+            dim = 2 + values["p3d"]*1
+            ax, fig, neigh, classes, limg = vp.plotfunc(window,dataset,speed,dim)
             if(dim==2):
                 #Function by click position
                 position = fig.canvas.mpl_connect('button_press_event', lambda event: vp.click2D(event, window, neigh, classes, limg))
                 #Function by click instance
                 #fig.canvas.mpl_connect('pick_event', vp.on_pick)
                 
-            #else:
-            #    cid = fig.canvas.callbacks.connect('button_press_event', demo_format_coord)
+            else:
+                position = fig.canvas.mpl_connect('button_press_event', lambda event: vp.click3D(event, ax, window, neigh, classes, limg))
 window.close()

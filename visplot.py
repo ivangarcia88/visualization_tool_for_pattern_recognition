@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import space_reduction as sr
 from sklearn.neighbors import NearestNeighbors
-
+import matplotlib as mpl
+from mpl_toolkits.mplot3d import Axes3D, proj3d
 
 # ------------------------------- This is to include a matplotlib figure in a Tkinter canvas
 
@@ -18,6 +19,7 @@ def click2D(event, window, neigh, classes, limg):
         imgpath1 = "images/"+limg[q[1][0][0]]
         imgpath2 = "images/"+limg[q[1][0][1]]
         imgpath3 = "images/"+limg[q[1][0][2]]
+        print(imgpath1)
         window["-MAIN-IMAGE-"].update(filename=imgpath1)
         window["-NN1-IMAGE-"].update(filename=imgpath2)
         window["-NN2-IMAGE-"].update(filename=imgpath3)
@@ -25,7 +27,52 @@ def click2D(event, window, neigh, classes, limg):
         window["-MAIN-IMAGE-"].update(filename="default-img.png")
         window["-NN1-IMAGE-"].update(filename="default-img.png")
         window["-NN2-IMAGE-"].update(filename="default-img.png")
-        
+
+def click3D(event, ax, window, neigh, classes, limg):
+    k = 3
+    #position = (event.xdata, event.ydata)
+    position = format_coord(event,ax)
+    print(position)
+    q = neigh.kneighbors([ position ], k, return_distance=True)
+    #print(q)
+    dist = q[0][0][0]
+    #ind = q[1][0][0]
+    if(dist<0.3):
+        imgpath1 = "images/"+limg[q[1][0][0]]
+        imgpath2 = "images/"+limg[q[1][0][1]]
+        imgpath3 = "images/"+limg[q[1][0][2]]
+        print(imgpath1)
+        window["-MAIN-IMAGE-"].update(filename=imgpath1)
+        window["-NN1-IMAGE-"].update(filename=imgpath2)
+        window["-NN2-IMAGE-"].update(filename=imgpath3)
+    else:
+        window["-MAIN-IMAGE-"].update(filename="default-img.png")
+        window["-NN1-IMAGE-"].update(filename="default-img.png")
+        window["-NN2-IMAGE-"].update(filename="default-img.png")
+
+def format_coord(event,ax):
+    # nearest edge
+    self = ax
+    xd = event.xdata
+    yd = event.ydata
+    p0, p1 = min(self.tunit_edges(),
+                 key=lambda edge: proj3d._line2d_seg_dist(
+                     edge[0], edge[1], (xd, yd)))
+ 
+    # scale the z value to match
+    x0, y0, z0 = p0
+    x1, y1, z1 = p1
+    d0 = np.hypot(x0-xd, y0-yd)
+    d1 = np.hypot(x1-xd, y1-yd)
+    dt = d0+d1
+    z = d1/dt * z0 + d0/dt * z1 
+    x, y, z = proj3d.inv_transform(xd, yd, z, self.M)
+    xs = self.format_xdata(x)
+    ys = self.format_ydata(y)
+    zs = self.format_zdata(z)
+    #print('x=%s, y=%s, z=%s' % (xs, ys, zs))
+    return (x, y, z)
+
 def on_pick(event):
     print(event.ind)
     #print (testData[event.ind], "clicked")
@@ -53,7 +100,7 @@ class Toolbar(NavigationToolbar2Tk):
 
 def plotData(Xp,y,dim):
     #fig = plt.figure()
-    plt.figure(1)
+    plt.figure()
     fig = plt.gcf()
     DPI = fig.get_dpi()
     # ------------------------------- you have to play with this size to reduce the movement error when the mouse hovers over the figure, it's close to canvas size
@@ -67,7 +114,7 @@ def plotData(Xp,y,dim):
         ax = fig.add_subplot(111, projection='3d')
         ax.scatter(Xp[:,0], Xp[:,1], Xp[:,2], c=y, marker='.', alpha=0.3)
         #plt.show()
-    return fig
+    return ax, fig
 
 def plotAndEvaluate(Xp,y,dim,show=True):
     if(show):
@@ -96,18 +143,20 @@ def plotfunc(window,dataset,speed,dim):
     # -------------------------------
     X,y,classes,le,limg = sr.dataPrePro(dataset)
     if(speed==0):
-        fig = plotData(X,y,dim)
-        X = X[:,0:2]
+        ax, fig = plotData(X,y,dim)
+        #X = X[:,0:2]
+        X = X[:,0:dim]
     elif(speed==1):
-        X =  sr.normalize(sr.umapTransfromData(X,y,dim=2))
-        fig = plotData(X,y,dim=2)
+        X =  sr.normalize(sr.umapTransfromData(X,y,dim=dim))
+        ax, fig = plotData(X,y,dim=dim)
     else:
-        X =  sr.normalize(sr.umapICNNTransfromData(X,y,dim=2))
-        fig = plotData(X,y,dim=2)
+        X =  sr.normalize(sr.umapICNNTransfromData(X,y,dim=dim))
+        ax, fig = plotData(X,y,dim=dim)
+    print("X shape", X.shape)
     neigh = NearestNeighbors(n_neighbors=3)
     neigh.fit(X)
     print(X.shape)
     draw_figure_w_toolbar(window['fig_cv'].TKCanvas, fig, window['controls_cv'].TKCanvas)
-    return fig, neigh, classes, limg
+    return ax, fig, neigh, classes, limg
     
 
