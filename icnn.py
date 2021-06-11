@@ -2,6 +2,15 @@ import pandas as pd
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
 
+#Omega function is not available in this function
+
+#Input
+#X a feature Matrix
+#y the class of every sample
+#k the number of neigbhors (small k focus on local structures big k on global)
+#p must be a natural number, the higher is p, the lower penalization on lambda function
+#q must be a natural number, the higher is p, the lower penalization on omega function
+#r must be a natural number, the higher is r, the lower penalization on gamma function
 def score(X,y,k=7,p=2,q=2,r=2):
     X = (X - X.min(axis=0)) / (X.max(axis=0) - X.min(axis=0)) #min max scale by feature
     nbrs = NearestNeighbors(n_neighbors=k+1).fit(X)
@@ -23,32 +32,13 @@ def score(X,y,k=7,p=2,q=2,r=2):
     plamb = (1 - scnd)*scMatrix
     lamb = (dcnd + plamb)
     lambs = np.sum(lamb,axis=1)
-    #lambs2 = np.round(((lambs/max(lambs))**(1/p)),2)
     lambs2 = np.round(((lambs/max(lambs))**(1/p)),2)
     lambr = round(sum(lambs2)/len(y),2)
-    #print(lambs2)
-    #print(lambr)
     #omega
-    #Not used
+    varsc = np.var(scnd)
+    vardf = np.var(dcnd)
+    omega = np.round((1 - (varsc+vardf))**(1/q),2)
     #gamma
-    gamma = round(sum((np.sum(scMatrix,axis=1)/k)**(1/p))/len(y),2)
-    #print("lambda, gamma: ",lambr,gamma)
-    return round((lambr + gamma)/2,2)
-
-'''
-#print(lambs2)
-#print(lambr)
-print("mask")
-print(scMatrix[0:3])
-print(dcMatrix[0:3])
-print("dist")
-print(distances[0:3])
-print(nd[0:3])
-print("res")
-print(dcnd[0:3])
-print(scnd[0:3])
-print(plamb[0:3])
-print("lamb")
-print(lamb[0:3])
-print(np.sum(lamb,axis=1))
-'''
+    gamma = round(sum((np.sum(scMatrix,axis=1)/k)**(1/r))/len(y),2)
+    print("lambda, omega, gamma: ",lambr,omega,gamma)
+    return round((lambr + omega + gamma)/3,3)
