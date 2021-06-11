@@ -9,6 +9,6 @@ Tambien se tienen las siguientes dependencias:
 
 -pip3 install umap
 
--pip3 install face_recognition
+-pip3 install pySimpleGUI
 
 -pip3 install umap-learn
