@@ -13,12 +13,12 @@ from sklearn.decomposition import PCA
 from sklearn import preprocessing
 import icnn
 
-def normalize(X):
+def normalize(X): #Min Max Scale (Normalize vectors between 0 and 1).
     scaler = MinMaxScaler()
     scaler.fit(X)
     return scaler.transform(X)
 
-def evplot(Xp,y,k=11,p=1,q=1,r=1):
+def evplot(Xp,y,k=11,p=1,q=1,r=1): #Evaluate transformation using icnnscore + knn classification score
     neigh = KNeighborsClassifier(n_neighbors=7)
     neigh.fit(Xp, y)
     icnnscore = icnn.score(Xp,y,k,p,q,r)
@@ -27,16 +27,14 @@ def evplot(Xp,y,k=11,p=1,q=1,r=1):
     print("graph score", fscore)
     return round((icnnscore + neigscore)/2,3)
 
-
-
-def umapTransfromData(X,y,dim=3):
+def umapTransfromData(X,y,dim=3): #Straight UMAP function for data transformation
     reducer = umap.UMAP(random_state=42, transform_seed=42, n_components=dim)
     reducer.fit(X)
     return reducer.transform(X)
      
 
-def umapICNNTransfromData(X,y,dim=3):
-    #UMAP NO SUPERVISADO
+def umapICNNTransfromData(X,y,dim=3): #Transform and Evaluate UMAP Transformation
+    #Not supervised UMAP
     #metrics = ["euclidean", "manhattan", "chebyshev", "minkowski"]#, "mahalanobis"]
     metrics = ["euclidean", "manhattan"]#, "mahalanobis"]
     nn = [3,7,17,42]
@@ -47,14 +45,11 @@ def umapICNNTransfromData(X,y,dim=3):
         m = random.choice(metrics)
         n = random.choice(nn)
         if([m,n] in tested):
-            #print("skip:",m,n)
             continue
         tested.append([m,n])
-        #print("Current test: ",i,m,n)
         reducer = umap.UMAP(random_state=42, transform_seed=42, n_components=dim, metric=m, n_neighbors=n)
         reducer.fit(X)
         X2 = reducer.transform(X)
-        #print("=======================")
         score = evplot(X2,y)
         if(score > bestScore):
             bestScore = score
@@ -62,10 +57,10 @@ def umapICNNTransfromData(X,y,dim=3):
             XB = X2.copy()
     return XB
 
-def dataPrePro(dataset):
+def dataPrePro(dataset): #Read Dataset and extract X, y (and related labels to y).
     df=pd.read_csv(dataset)
     #df=df.drop(df.index[0:1])
-    df = df.sample(frac=1, random_state=42) #Shuffle rows
+    #df = df.sample(frac=1, random_state=42) #Shuffle rows
     data = df.values
     #data = data[0:500,:]
     X = data[:,2:]
