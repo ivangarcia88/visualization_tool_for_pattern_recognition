@@ -8,8 +8,7 @@ Para una mejor experiencia, se sugiere emplear un entorno virtual nuevo de pytho
 
 ```plaintext
 python -m venv vistool
-vistool
-\Scripts\activate
+vistool\Scripts\activate
 ```
 
 **anaconda**
