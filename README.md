@@ -1,14 +1,26 @@
-Versión 0.1 de la interfaz de visualización, se requiere tener python 3.6 o superior para poder ejecutarlo
+> **Versión 0.1 de la interfaz de visualización.** 
 
-Tambien se tienen las siguientes dependencias:
--pip3 install sklearn
+Se requiere tener python 3.6 o superior para poder ejecutarlo.
 
--pip3 install matplotlib
+Para una mejor experiencia, se sugiere emplear un entorno virtual nuevo de python. Para ello sugerimos emplear venv o anaconda
 
--pip3 install pandas
+**venv**
 
--pip3 install umap
+```plaintext
+python -m venv vistool
+vistool
+\Scripts\activate
+```
 
--pip3 install pySimpleGUI
+**anaconda**
 
--pip3 install umap-learn
+```plaintext
+conda create -n vistool python=3.9
+conda activate vistool
+```
+
+Los requerimentos se encuentran en el archivo requirements.txt el cual se puede ejecutar de la siguiente manera
+
+```plaintext
+pip -r requirements.txt
+```
