@@ -19,5 +19,5 @@ conda activate mpostalcode
 Los requerimentos se encuentran en el archivo _requirements.txt_ el cual se puede ejecutar de la siguiente manera
 
 ```plaintext
-pip -r requirements.txt
+pip install -r requirements.txt
 ```
