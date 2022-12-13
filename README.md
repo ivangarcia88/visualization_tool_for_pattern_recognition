@@ -1,23 +1,25 @@
-> Script para transformar la base de datos de excel de correos de México en archivos JSON y CSV.
+> **Versión 0.1 de la interfaz de visualización.** 
+Esta interfaz esta desarrollado en PySimpleGUI y su uso primordial es para intentar identificar inconsistencias de etiquetado (supervised machine learning) mediante tecnicas de visualización.
 
-En este repositorio creamos un script que permite transformar el excel que provee correos de mexico en formatos más amigables para la ingesta de datos.
+Se requiere tener python 3.6 o superior para poder ejecutarlo.
 
-El archivo que se usa como origen se puede obtener en su sitio oficial:
+Para una mejor experiencia, se sugiere emplear un entorno virtual nuevo de python. Para ello sugerimos emplear venv o anaconda
 
-[https://www.correosdemexico.gob.mx/SSLServicios/ConsultaCP/CodigoPostal_Exportar.aspx](https://www.correosdemexico.gob.mx/SSLServicios/ConsultaCP/CodigoPostal_Exportar.aspx)
-
-
-Para una mejor experiencia, se sugiere instalar Anaconda (https://www.anaconda.com/) y crear un entorno virtual.
-
-**Anaconda**
+**venv**
 
 ```plaintext
-conda create -n mpostalcode python=3.10
-conda activate mpostalcode
+python -m venv vistool
+vistool\Scripts\activate
 ```
 
-Los requerimentos se encuentran en el archivo _requirements.txt_ el cual se puede ejecutar de la siguiente manera
+**anaconda**
 
 ```plaintext
-pip install -r requirements.txt
+conda create -n vistool python=3.9
+conda activate vistool
 ```
+
+Los requerimentos se encuentran en el archivo requirements.txt el cual se puede ejecutar de la siguiente manera
+
+```plaintext
+pip -r requirements.txt
